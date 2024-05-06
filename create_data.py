@@ -1,0 +1,73 @@
+import os
+
+
+# 制作CN-Celeb数据集列表
+# 下载地址：https://openslr.trmal.net/resources/82/cn-celeb_v2.tar.gz
+# 下载并解压到dataset目录，解压命令：tar -zxvf cn-celeb_v2.tar.gz
+def create_cn_celeb(list_path, data_path='dataset/', last_label=0):
+    f_train = open(list_path, 'a', encoding='utf-8')
+    data_dir = os.path.join(data_path, 'CN-Celeb_flac/data/')
+    dirs = sorted(os.listdir(data_dir))
+    for label, d in enumerate(dirs):
+        if label >= 800:continue
+        for file in os.listdir(os.path.join(data_dir, d)):
+            sound_path = os.path.join(data_dir, d, file).replace('\\', '/')
+            f_train.write(f'{sound_path}\t{label+last_label}\n')
+    f_train.close()
+    return 800
+
+
+# 制作CN-Celeb2数据集列表，如果是Windows，请跳过这个数据集
+# 下载分包1地址：https://openslr.trmal.net/resources/82/cn-celeb2_v2.tar.gzaa
+# 下载分包2地址：https://openslr.trmal.net/resources/82/cn-celeb2_v2.tar.gzab
+# 下载分包3地址：https://openslr.trmal.net/resources/82/cn-celeb2_v2.tar.gzac
+# 下载并解压到dataset目录，合并压缩包命令：cat cn-celeb2_v2.tar.gza* > cn-celeb2_v2.tar.gz，解压命令：tar -zxvf cn-celeb2_v2.tar.gz
+
+def create_cn_celeb2(list_path, data_path='dataset/', last_label=0):
+    f_train = open(list_path, 'a', encoding='utf-8')
+    data_dir = os.path.join(data_path, 'CN-Celeb2_flac/data/')
+    if not os.path.exists(data_dir):
+        print('CN-Celeb2数据集不存在，请先下载并解压到dataset目录，目前忽略，你也可继续正常训练')
+        return
+    f_train = open(list_path, 'a', encoding='utf-8')
+    dirs = sorted(os.listdir(data_dir))
+    for label, d in enumerate(dirs):
+        for file in os.listdir(os.path.join(data_dir, d)):
+            sound_path = os.path.join(data_dir, d, file).replace('\\', '/')
+            f_train.write(f'{sound_path}\t{label+last_label}\n')
+    f_train.close()
+    return last_label+1996
+
+def create_vox_celeb(list_path, data_path='dataset/', last_label=0):
+    f_train = open(list_path, 'a', encoding='utf-8')
+    data_dir = os.path.join(data_path, 'Vox-Celeb/')
+    dirs = sorted(os.listdir(data_dir))
+    for label, d in enumerate(dirs):
+        for file in os.listdir(os.path.join(data_dir, d)):
+            sound_path = os.path.join(data_dir, d, file).replace('\\', '/')
+            f_train.write(f'{sound_path}\t{label+last_label}\n')
+    f_train.close()
+    return last_label+len(dirs)
+
+def create_vox_celeb2(list_path, data_path='dataset/', last_label=0):
+    f_train = open(list_path, 'a', encoding='utf-8')
+    data_dir = os.path.join(data_path, 'Vox-Celeb2/dev/aac/')
+    dirs = sorted(os.listdir(data_dir))
+    for label, d in enumerate(dirs):
+        for file in os.listdir(os.path.join(data_dir, d)):
+            sound_path = os.path.join(data_dir, d, file).replace('\\', '/')
+            f_train.write(f'{sound_path}\t{label+last_label}\n')
+    f_train.close()
+    return last_label+len(dirs)
+
+
+if __name__ == '__main__':
+    list_path='dataset/train_list_vox.txt'
+    data_path='/home/data/panjianan/'
+    last_label = 0
+    if os.path.exists(list_path):
+        os.remove(list_path)
+    # last_label = create_cn_celeb(list_path=list_path, data_path=data_path, last_label=last_label)
+    # last_label = create_cn_celeb2(list_path=list_path, data_path=data_path, last_label=last_label)
+    last_label = create_vox_celeb(list_path=list_path, data_path=data_path, last_label=last_label)
+    last_label = create_vox_celeb2(list_path=list_path, data_path=data_path, last_label=last_label)
